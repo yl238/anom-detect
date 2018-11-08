@@ -1,0 +1,13 @@
+data:../data/tar_dir/
+image_size:128
+epochs:40
+lr:0.0001
+batch_size:32
+lr_decay:0.1
+schedule:[50]
+kl_weight:0.01
+resume:None
+reset_opt:False
+print_freq:10
+out_dir:../exp_results/NV_kl0.01
+cuda:True

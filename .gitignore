@@ -1,3 +1,8 @@
+# Do not save models
+*.tar
+
+# Do not save data
+data/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
