@@ -11,5 +11,5 @@ export EXP_DIR='../exp_results/'
 # test
 $PYTHONBIN ../outlier_detection.py --cuda \
     --data ${DATA_DIR} \
-    --model_path ${EXP_DIR}/NV_kl0.01/best_model.pth.tar \
-    --image_size 128 --kl_weight 0.01 --out_csv auc_result5.csv
+    --model_path ${EXP_DIR}/NORMAL0.1/best_model.pth.tar \
+    --image_size 128 --kl_weight 0.01 --out_csv auc_result_auc.csv

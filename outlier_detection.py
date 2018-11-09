@@ -8,7 +8,7 @@ from dataloader import load_vae_test_datasets, load_vae_train_datasets
 import os
 import torch
 from tqdm import tqdm
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, f1_score, precision_score, recall_score, accuracy_score
 from itertools import product
 import numpy as np
 import pandas as pd
@@ -159,6 +159,11 @@ print(df_mean)
 
 classes.remove('NORMAL')
 auc_result = np.zeros([len(score_names), len(classes) + 1])
+f1_result = np.zeros([len(score_names), len(classes)+1])
+precision_result = np.zeros([len(score_names), len(classes)+1])
+recall_result = np.zeros([len(score_names), len(classes)+1])
+accuracy_result = np.zeros([len(score_names), len(classes)+1])
+
 # get auc roc for each class
 for (name, cls) in product(score_names, classes):
     normal_scores = scores[(name, 'NORMAL')]
@@ -166,6 +171,10 @@ for (name, cls) in product(score_names, classes):
     y_true = [0]*len(normal_scores) + [1]*len(abnormal_scores)
     y_score = normal_scores + abnormal_scores
     auc_result[score_names.index(name), classes.index(cls)] = roc_auc_score(y_true, y_score)
+    f1_result[score_names.index(name), classes.index(cls)] = f1_score(y_true, y_score)
+    precision_result[score_names.index(name), classes.index(cls)] = precision_score(y_true, y_score)
+    recall_result[score_names.index(name), classes.index(cls)] = recall_score(y_true, y_score)
+    accuracy_result[score_names.index(name), classes.index(cls)] = accuracy_score(y_true, y_score)
 
 # add auc roc against all diseases
 for name in score_names:
@@ -174,6 +183,10 @@ for name in score_names:
     y_true = [0]*len(normal_scores) + [1]*len(abnormal_scores)
     y_score = normal_scores + abnormal_scores
     auc_result[score_names.index(name), -1] = roc_auc_score(y_true, y_score)
+    f1_result[score_names.index(name), -1] = f1_score(y_true, y_score)
+    precision_result[score_names.index(name), -1] = precision_score(y_true, y_score)
+    recall_result[score_names.index(name), -1] = recall_score(y_true, y_score)
+    accuracy_result[score_names.index(name), -1] = accuracy_score(y_true, y_score)
 
 df = pd.DataFrame(auc_result, index=score_names, columns=classes + ['ALL'])
 # display
@@ -181,6 +194,34 @@ print("###################### AUC ROC #####################")
 print(df)
 print("####################################################")
 df.to_csv(args.out_csv)
+
+df = pd.DataFrame(f1_result, index=score_names, columns=classes + ['ALL'])
+# display
+print("###################### F1 #####################")
+print(df)
+print("####################################################")
+df.to_csv('f1.csv')
+
+df = pd.DataFrame(precision_result, index=score_names, columns=classes + ['ALL'])
+# display
+print("###################### Precision #####################")
+print(df)
+print("####################################################")
+df.to_csv('precision.csv')
+
+df = pd.DataFrame(recall_result, index=score_names, columns=classes + ['ALL'])
+# display
+print("###################### Recall #####################")
+print(df)
+print("####################################################")
+df.to_csv('recall.csv')
+
+df = pd.DataFrame(accuracy_result, index=score_names, columns=classes + ['ALL'])
+# display
+print("###################### Accuracy #####################")
+print(df)
+print("####################################################")
+df.to_csv('accuracy')
 
 # fit a gamma distribution
 _, val_loader = load_vae_train_datasets(args.image_size, args.data, 32)
