@@ -148,4 +148,3 @@ for epoch in range(args.epochs):
         write_image("samples", samples)
         print('done')
 
-import ipdb
